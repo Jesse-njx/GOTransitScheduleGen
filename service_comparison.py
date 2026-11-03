@@ -10,7 +10,7 @@ from pathlib import Path
 import gtfs_kit as gk
 import pandas as pd
 
-from ScheduleGen import resolve_route_pairs
+from ScheduleGen import METROLINX_ATTRIBUTION, resolve_route_pairs
 from schedule_ordering import time_seconds
 
 
@@ -100,6 +100,12 @@ def compare_service(before, after, before_date, after_date, pairs):
             changes.extend(dict(change=change, route=str(selector), direction_id=direction, **row) for row in rows)
     return {
         'before_date': before_date, 'after_date': after_date, 'routes': summaries, 'changes': changes,
+        'feed_info': {label: [] if feed.feed_info is None else json.loads(feed.feed_info.to_json(orient='records'))
+                      for label, feed in [('before', before), ('after', after)]},
+        'attribution': METROLINX_ATTRIBUTION if any(
+            feed.agency is not None and 'agency_name' in feed.agency
+            and feed.agency.agency_name.astype(str).str.casefold().eq('go transit').any()
+            for feed in (before, after)) else None,
         'comparison_basis': 'Exact ordered raw stop IDs, arrival/departure service-day seconds, pickup/drop-off types; multiplicity preserved.',
         'limitations': [
             'Retimed trips appear as one removal and one addition; no automatic cancellation or one-to-one retiming inference.',
@@ -114,6 +120,10 @@ def write_report(report, output):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     (output / 'comparison.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    notes = [report['comparison_basis'], *report['limitations']]
+    if report['attribution']:
+        notes.append(report['attribution'])
+    (output / 'README.txt').write_text('\n\n'.join(notes) + '\n', encoding='utf-8')
     columns = ['change', 'route', 'direction_id', 'trip_id', 'headsign', 'calls']
     with (output / 'changed-trips.csv').open('w', newline='', encoding='utf-8') as target:
         writer = csv.DictWriter(target, fieldnames=columns)

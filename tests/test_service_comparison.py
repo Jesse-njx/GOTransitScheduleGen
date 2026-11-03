@@ -70,9 +70,11 @@ def test_frequency_service_is_not_counted_as_one_departure():
 
 def test_unknown_routes_fail_and_reports_are_machine_readable(tmp_path):
     feed = make_feed()
+    feed.agency = pd.DataFrame([{'agency_name': 'GO Transit'}])
     with pytest.raises(ValueError, match='unknown'):
         compare_service(feed, feed, '20261029', '20261029', [('missing', 1)])
     report = compare(feed, feed)
     write_report(report, tmp_path)
     assert len(pd.read_csv(tmp_path / 'summary.csv')) == 1
     assert pd.read_csv(tmp_path / 'changed-trips.csv').empty
+    assert 'Metrolinx' in (tmp_path / 'README.txt').read_text()

@@ -26,6 +26,7 @@ Outputs:
 - `summary.csv`: before/after totals, unchanged patterns, removed and added observations.
 - `changed-trips.csv`: full trip IDs, headsigns, and ordered call details for review.
 - `comparison.json`: complete report, matching rules, and limitations.
+- `README.txt`: report interpretation and GO data attribution when applicable.
 
 Matching uses raw stop IDs, arrival and departure seconds since service-day
 midnight, and pickup/drop-off types. Seconds and hours past 24 are preserved.
