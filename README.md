@@ -1,5 +1,9 @@
 # GO Transit Schedule Generator
 
+This experimental branch adds optional tools for feed inspection, service
+comparison, and recipe-driven timetable packs. See the
+[owner handoff and runnable examples](experiments/README.md).
+
 Generate combined train/bus timetable grids from a local GTFS feed for one
 service date. Export both travel directions to Excel and optionally a printable
 PDF. Trips occupy rows and stops occupy columns, as in a published schedule.
