@@ -1,0 +1,14 @@
+{
+  "feed": "../../data/GO-GTFS.zip",
+  "jobs": [
+    {
+      "name": "lakeshore-west",
+      "title": "Lakeshore West | train and bus",
+      "dates": ["20261029", "20261031", "20261101"],
+      "routes": ["LW:1", "11:0", "12:0", "16:0", "18:0"],
+      "stops": ["NI", "SCTH", "CF", "WR", "HA", "AL", "BU", "00139", "AP", "BO", "OA", "CL", "PO", "LO", "MI", "EX", "UN"],
+      "sort_stop": "UN",
+      "pdf": true
+    }
+  ]
+}
