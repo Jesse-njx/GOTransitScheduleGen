@@ -8,6 +8,8 @@ from pathlib import Path
 import gtfs_kit as gk
 import pandas as pd
 
+from ScheduleGen import METROLINX_ATTRIBUTION
+
 
 def _text(value):
     return '' if pd.isna(value) else str(value)
@@ -82,6 +84,8 @@ def inspect_feed(feed, date, routes=None, stop_search=None):
         'coverage': {'start': start, 'end': end}, 'feed_info': metadata,
         'active_trips': len(active), 'routes': inventory, 'stops': stop_inventory,
         'warnings': warnings,
+        'attribution': METROLINX_ATTRIBUTION if feed.agency is not None and 'agency_name' in feed.agency
+        and feed.agency.agency_name.astype(str).str.casefold().eq('go transit').any() else None,
         'stop_id_note': 'Raw feed IDs, before duplicate_stn.json. The generator expects canonical IDs for --stops.',
     }
 
@@ -112,6 +116,8 @@ def main():
     print(report['stop_id_note'])
     for stop in report['stops']:
         print(f"{stop['stop_id']} | {stop['stop_name']} | {stop['active_calls']} calls")
+    if report['attribution']:
+        print(report['attribution'])
     return 2 if report['date_status'] == 'outside_feed_range' else 0
 
 

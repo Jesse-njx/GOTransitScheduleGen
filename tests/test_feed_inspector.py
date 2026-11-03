@@ -6,11 +6,14 @@ from test_schedule import make_feed
 
 
 def test_inventory_explains_directions_and_searches_names():
-    report = inspect_feed(make_feed(), '20261029', ['LW'], 'union')
+    feed = make_feed()
+    feed.agency = pd.DataFrame([{'agency_name': 'GO Transit'}])
+    report = inspect_feed(feed, '20261029', ['LW'], 'union')
     assert report['active_trips'] == 2
     assert {r['direction_id'] for r in report['routes']} == {0, 1}
     assert [s['stop_id'] for s in report['stops']] == ['UN']
     assert report['stops'][0]['active_calls'] == 2
+    assert 'Metrolinx' in report['attribution']
 
 
 def test_out_of_range_differs_from_a_day_without_service():
